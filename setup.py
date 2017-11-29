@@ -3,10 +3,11 @@
 Python setuptools script for ``ocspd`` application.
 """
 import os
-import shutil
 from setuptools import setup
 from setuptools import find_packages
 from setuptools.command.install import install
+import ocspd.deprecation
+
 # pylint: disable=invalid-name
 # Disable superfluous-parens, because we want py3 compatibility
 # pylint: disable=superfluous-parens
@@ -51,6 +52,7 @@ class CustomInstallCommand(install):
         """
         Installs and then copies the service file to the systemd directory
         """
+        ocspd.deprecation.run(True)
         install.run(self)
         print("Creating needed directories")
         for directory in self.CREATE_DIRS:

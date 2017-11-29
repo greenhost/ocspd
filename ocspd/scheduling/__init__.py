@@ -22,13 +22,14 @@ This module defines the following objects:
     can define with :class:`ocspd.scheduling.ScheduledTaskContext`.
 """
 import threading
-import logging
 import datetime
 from queue import Queue
 import time
 from collections import defaultdict
+import ocspd.core.log
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 
 
 class ScheduledTaskContext(object):

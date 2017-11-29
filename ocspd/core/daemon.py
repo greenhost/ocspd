@@ -47,10 +47,10 @@ This module bootstraps the ocspd process by starting threads for:
   updates to HAProxy through a HAProxy socket.
 
 """
-import logging
 import time
 import threading
 import signal
+import ocspd.core.log
 from ocspd.core.certfinder import CertFinderThread
 from ocspd.core.certparser import CertParserThread
 from ocspd.core.ocsprenewer import OCSPRenewerThread
@@ -58,7 +58,8 @@ from ocspd.core.ocspadder import OCSPAdder
 from ocspd.scheduling import SchedulerThread
 from ocspd import MAX_RESTART_THREADS
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 
 
 class OCSPDaemon(object):

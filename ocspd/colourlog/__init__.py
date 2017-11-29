@@ -106,8 +106,9 @@ class ColourFormatter(logging.Formatter):
 
         .. code-block:: python
 
-            import logging
-            logger = logging.getLogger(__name__)
+            import ocspd.core.log
+            logger = ocspd.core.log.get_logger(__name__)
+
             logger.setLevel(level=logging.DEBUG)
             handler = logging.StreamHandler()
             handler.setFormatter(

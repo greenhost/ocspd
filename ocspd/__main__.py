@@ -30,22 +30,13 @@ user's process hierarchy node. In any case, it starts up the
 module to bootstrap the application.
 """
 import configargparse
-import logging
-import logging.handlers
 import os
 import daemon
 import ocspd
 import ocspd.core.daemon
 import ocspd.core.excepthandler
-from ocspd.colourlog import ColourFormatter
-
-#: :attr:`logging.format` format string for log files and syslog
-LOGFORMAT = '[%(levelname)s] %(threadName)+10s/%(name)-16.20s %(message)s'
-#: :attr:`logging.format` format string for stdout
-COLOUR_LOGFORMAT = (
-    '{lvl}[%(levelname)s]{reset} {msg}%(threadName)+10s/%(name)-16.20s '
-    '%(message)s{reset}'
-)
+import ocspd.core.log
+import ocspd.deprecation
 
 
 def get_cli_arg_parser():
@@ -231,44 +222,28 @@ def init():
     :func:`ocspd.core.daemon.run()` either in daemonised mode if the ``-d``
     argument was supplied, or in the current context if ``-d`` wasn't supplied.
     """
-    log_file_handles = []
     parser = get_cli_arg_parser()
     args = parser.parse_args()
     args.directories = [os.path.abspath(d) for d in args.directories]
     verbose = args.verbose or args.verbosity
-    log_level = max(min(50 - verbose * 10, 50), 10)
-    logging.basicConfig()
-    logger = logging.getLogger('ocspd')
-    logger.propagate = False
-    # Don't allow dependencies to log anything but fatal errors
-    logging.getLogger("requests").setLevel(logging.FATAL)
-    logging.getLogger("urllib3").setLevel(logging.FATAL)
-    logger.setLevel(level=log_level)
-    if not args.quiet and not args.daemon:
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(log_level)
-        console_handler.setFormatter(ColourFormatter(COLOUR_LOGFORMAT))
-        logger.addHandler(console_handler)
-    if args.logdir:
-        file_handler = logging.FileHandler(
-            os.path.join(args.logdir, 'ocspd.log'))
-        file_handler.setLevel(log_level)
-        file_handler.setFormatter(logging.Formatter(LOGFORMAT))
-        logger.addHandler(file_handler)
-        log_file_handles.append(file_handler.stream)
-        ocspd.core.excepthandler.LOG_DIR = args.logdir
-    if args.syslog:
-        syslog_handler = logging.handlers.SysLogHandler(address='/dev/log')
-        syslog_handler.setLevel(log_level)
-        syslog_handler.setFormatter(logging.Formatter(LOGFORMAT))
-        logger.addHandler(syslog_handler)
+    quiet = args.quiet | args.daemon
+    ocspd.core.excepthandler.LOGDIR = args.logdir
+    logger = ocspd.core.log.set_logger(
+        'ocspd',
+        logdir=args.logdir,
+        verbose=verbose,
+        quiet=quiet,
+        syslog=args.syslog
+    )
+    ocspd.deprecation.run()
     if args.daemon:
         logger.info("Daemonising now..")
-        with daemon.DaemonContext(files_preserve=log_file_handles):
+        with daemon.DaemonContext(files_preserve=logger.log_file_handles):
             ocspd.core.daemon.OCSPDaemon(args)
     else:
         logger.info("Running interactively..")
         ocspd.core.daemon.OCSPDaemon(args)
+
 
 if __name__ == '__main__':
     init()

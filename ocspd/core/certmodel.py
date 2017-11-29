@@ -24,6 +24,7 @@ import datetime
 import certvalidator
 import ocspbuilder
 import asn1crypto
+import ocspd.core.log
 from oscrypto import asymmetric
 from ocspd.core.exceptions import CertFileAccessError
 from ocspd.core.exceptions import OCSPBadResponse
@@ -37,7 +38,8 @@ from future.standard_library import hooks
 with hooks():
     from urllib.parse import urlparse
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 
 
 class CertModel(object):

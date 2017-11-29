@@ -24,16 +24,18 @@ files need to be indexed again (thus files are considered "new").
 
 import threading
 import time
-import logging
 import re
 import os
 import ocspd
+import ocspd.core.log
 from ocspd.core.excepthandler import ocsp_except_handle
 from ocspd.core.taskcontext import OCSPTaskContext
 from ocspd.core.certmodel import CertModel
 from ocspd.util.cache import cache
+import ocspd.deprecation
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 
 
 class CertFinderThread(threading.Thread):
@@ -129,6 +131,7 @@ class CertFinderThread(threading.Thread):
                             break
                         time.sleep(1)
                         sleep_time = sleep_time - 1
+            ocspd.deprecation.run()
         LOG.debug("Goodbye cruel world..")
 
     def refresh(self):

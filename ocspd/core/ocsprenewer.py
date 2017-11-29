@@ -12,13 +12,14 @@ the staple expires. Optionally creates a
 """
 
 import threading
-import logging
 import datetime
 import queue
+import ocspd.core.log
 from ocspd.core.taskcontext import OCSPTaskContext
 from ocspd.core.excepthandler import ocsp_except_handle
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 
 
 class OCSPRenewerThread(threading.Thread):

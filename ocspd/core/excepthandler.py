@@ -33,10 +33,10 @@ caught again and the cycle continues.
 
 from contextlib import contextmanager
 import datetime
-import logging
 import os
 import traceback
 import configargparse
+import ocspd.core.log
 from ocspd.core.exceptions import OCSPBadResponse
 from ocspd.core.exceptions import RenewalRequirementMissing
 from ocspd.core.exceptions import CertFileAccessError
@@ -53,7 +53,7 @@ except NameError:
     import socket
     BrokenPipeError = socket.error
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
 
 #: This is a global variable that is overridden by ocspd.__main__ with
 #: the command line argument: ``--logdir``

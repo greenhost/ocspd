@@ -3,12 +3,12 @@
 Module for adding OCSP Staples to a running HAProxy instance.
 """
 import threading
-import logging
 import socket
 import errno
 import os
 import queue
 from io import StringIO
+import ocspd.core.log
 from ocspd.core.excepthandler import ocsp_except_handle
 import ocspd.core.exceptions
 import ocspd.util.functions
@@ -19,7 +19,8 @@ except NameError:
     import socket
     BrokenPipeError = socket.error
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 SOCKET_BUFFER_SIZE = 1024
 
 

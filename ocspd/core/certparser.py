@@ -8,13 +8,14 @@ processed ASAP.
 """
 
 import threading
-import logging
 import datetime
 import queue
+import ocspd.core.log
 from ocspd.core.excepthandler import ocsp_except_handle
 from ocspd.core.taskcontext import OCSPTaskContext
 
-LOG = logging.getLogger(__name__)
+LOG = ocspd.core.log.get_logger(__name__)
+
 
 
 class CertParserThread(threading.Thread):
